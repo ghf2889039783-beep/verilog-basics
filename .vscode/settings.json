@@ -1,0 +1,11 @@
+{
+  "[bat]": {
+    "files.encoding": "gbk"
+  },
+  "files.exclude": {
+    "sim": true,
+    "work": true,
+    "transcript": true,
+    "vsim.wlf": true
+  }
+}
