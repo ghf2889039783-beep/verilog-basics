@@ -2,3 +2,5 @@ work/
 *.vcd
 transcript
 sim
+*.wlf
+*.out
