@@ -4,7 +4,7 @@
 
 module counter_tb;
 
-    localparam WIDTH = 4;
+    localparam integer WIDTH = 4;
 
     reg              clk   = 1'b0;
     reg              rst_n = 1'b0;

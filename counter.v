@@ -3,7 +3,7 @@
 `timescale 1ns / 1ps
 
 module counter #(
-    parameter WIDTH = 4
+    parameter integer WIDTH = 4
 ) (
     input  wire             clk,
     input  wire             rst_n,   // 异步复位，低有效

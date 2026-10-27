@@ -14,21 +14,27 @@
 ```
 counter/
 ├── 打开工程.bat      双击 = 用 VS Code 打开本目录
-├── run_oss.bat       双击 = 编译 + 仿真（iverilog，主力）
+├── run_oss.bat       双击 = 编译 + 仿真（iverilog）
 ├── 看波形.bat        双击 = 编译 + 仿真 + 弹 GTKWave
-├── run.bat           备用 = ModelSim-Altera Starter
-├── wave.bat          备用 = ModelSim 波形窗口
 ├── counter.v         RTL
 ├── counter_tb.v      自检 TB（PASS/FAIL 由 $display 判定，不靠肉眼）
 ├── Makefile          WSL 里 make run / make wave / make clean
 └── counter_tb.vcd    仿真波形（VS Code 里点开，或 GTKWave）
 ```
 
+## 工具链
+
+| 工具 | 版本 | 位置 |
+|---|---|---|
+| Icarus Verilog | 14.0 | `E:\tools\oss-cad-suite\bin` |
+| Verilator | 5.x | 同上 |
+| GTKWave | — | 同上 |
+| Verible | v0.0-4296 | `E:\tools\verible\bin`（已加入用户 PATH） |
+| VS Code + Verilog-HDL + VaporView | — | 用户级安装 |
+
 ## 怎么跑
 
-**Windows（当前机器，主力方式）**
-
-双击 `run_oss.bat`，或命令行：
+双击 `run_oss.bat`，或 VS Code 里按 `Ctrl+Shift+B`：
 
 ```bat
 cd /d E:\work\verilog\counter
@@ -36,13 +42,6 @@ run_oss.bat
 ```
 
 期望输出结尾：`RESULT: ALL PASS  (6/6)`
-
-**WSL / Ubuntu（iverilog + gtkwave）**
-
-```bash
-make run     # 编译 + 仿真，直接打印 PASS/FAIL
-make wave    # 顺便打开波形
-```
 
 ## 怎么看波形
 
@@ -52,13 +51,32 @@ make wave    # 顺便打开波形
 
 看波形顺序：先找时钟（周期应为 10ns）→ 再看复位（`rst_n` 拉低时 `cnt` 应立刻归零）→ 最后看 `en` 与 `cnt` 的加一关系。
 
-## ⚠️ 改 .bat 的注意事项
+## 代码规范（Verible）
 
-本目录的 `.bat` 全部是 **GBK 编码 + CRLF 换行**。原因是中文 Windows 的 cmd 按 GBK 解码，
-若存成 UTF-8，中文注释会变乱码并把 `setlocal` / `goto` 一起吞掉，脚本一条命令都执行不了。
+VS Code 已配好 Verible：
 
-在 VS Code 里改 `.bat` 后，必须确认右下角编码显示 `GBK`（不是 `UTF-8`）再保存。
-若不小心存成 UTF-8 出现乱码，用 Git 还原：`git checkout -- run_oss.bat`。
+- **保存时自动 lint** —— 有风格问题会在 Problems 面板标出来
+- **手动格式化**：`Shift+Alt+F`（未开保存自动格式化，因为 Verible 会把 `if/else` 单语句收成一行）
+
+命令行用法：
+
+```bat
+verible-verilog-lint counter.v counter_tb.v
+verible-verilog-format --indentation_spaces=4 counter.v
+```
+
+## ⚠️ 两个已踩过的坑
+
+**1. `.bat` 必须是 GBK 编码 + CRLF 换行**
+
+中文 Windows 的 cmd 按 GBK 解码，若存成 UTF-8，中文注释会变乱码并把 `setlocal` / `goto` 一起吞掉。
+VS Code 已通过 `.vscode/settings.json` 把 `[bat]` 强制为 GBK，改完确认右下角显示 `GBK` 再保存。
+
+**2. `parameter` 要用 `integer` 而不是 `int`**
+
+`parameter int WIDTH` 是合法 SystemVerilog，但 ModelSim-Altera 10.1d（2012 年）不认，会报
+`near "WIDTH": syntax error`。用 Verilog-2001 的 `parameter integer WIDTH` 两个仿真器都能过，
+Verible 的 `explicit-parameter-storage-type` 规则也满足。
 
 ## TB 的 6 个 check point
 
