@@ -15,7 +15,7 @@ module counter #(
         if (!rst_n)
             cnt <= {WIDTH{1'b0}};
         else if (en)
-            cnt <= cnt + 1'b2;
+            cnt <= cnt + 1'b1;
     end
 
 endmodule
