@@ -1,20 +1,35 @@
 @echo off
-REM run.bat â€”â€” ç”¨ ModelSim-Altera Starter 10.1d è·‘ä»¿çœŸï¼ˆWSL è£…å¥½ä¹‹å‰å…ˆç”¨è¿™ä¸ªï¼‰
-REM ç”¨æ³•ï¼šåŒå‡»ï¼Œæˆ–åœ¨ PowerShell é‡Œ .\run.bat
+chcp 936 >nul
+REM ±¸ÓÃ·½°¸£ºÓÃ ModelSim-Altera Starter 10.1d ÅÜ·ÂÕæ
 setlocal
-set PATH=D:\altera\13.1\modelsim_ase\win32aloem;%PATH%
+set "PATH=D:\altera\13.1\modelsim_ase\win32aloem;%PATH%"
+cd /d "%~dp0"
+
+if not exist "D:\altera\13.1\modelsim_ase\win32aloem\vlib.exe" (
+    echo [´íÎó] ÕÒ²»µ½ ModelSim
+    echo Èç¹ûÒÑ¾­É¾µô D:\altera£¬¾Í¸ÄÓÃ run_oss.bat
+    echo.
+    pause
+    exit /b 1
+)
 
 if exist work rmdir /s /q work
-vlib work || goto :err
-vlog -work work counter.v counter_tb.v || goto :err
-vsim -c -do "run -all; quit" counter_tb || goto :err
+vlib work
+if errorlevel 1 goto :err
+vlog -work work counter.v counter_tb.v
+if errorlevel 1 goto :err
+vsim -c -do "run -all; quit" counter_tb
+if errorlevel 1 goto :err
 
 echo.
-echo [OK] æ³¢å½¢æ–‡ä»¶ï¼šcounter_tb.vcd
-echo      çœ‹æ³¢å½¢ï¼švsim -view counter_tb.vcd  ^(æˆ–è£… GTKWave å gtkwave counter_tb.vcd^)
-goto :eof
+echo [Íê³É] ²¨ĞÎÎÄ¼ş: counter_tb.vcd
+echo.
+pause
+exit /b 0
 
 :err
 echo.
-echo [FAIL] ä¸Šä¸€æ­¥å‡ºé”™ï¼Œæ£€æŸ¥ä¸Šé¢çš„æŠ¥é”™ä¿¡æ¯
+echo [Ê§°Ü] ÉÏÒ»²½±¨´íÁË£¬¿´ÉÏÃæ¼¸ĞĞµÄ´íÎóĞÅÏ¢
+echo.
+pause
 exit /b 1

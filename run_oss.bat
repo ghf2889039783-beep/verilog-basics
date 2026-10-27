@@ -1,25 +1,38 @@
 @echo off
-REM run_oss.bat â€”â€” ç”¨ OSS CAD Suite é‡Œçš„ iverilog è·‘ä»¿çœŸï¼ˆWSL è£…å¥½ä¹‹å‰çš„ä¸»åŠ›æ–¹å¼ï¼‰
-REM ä¾èµ–ï¼šE:\tools\oss-cad-suite
+chcp 936 >nul
+REM ÓÃ OSS CAD Suite ÀïµÄ iverilog ±àÒë²¢·ÂÕæ
 setlocal
 set "YOSYSHQ_ROOT=E:\tools\oss-cad-suite"
 set "PATH=%YOSYSHQ_ROOT%\bin;%YOSYSHQ_ROOT%\lib;%PATH%"
 cd /d "%~dp0"
 
-echo [1/2] ç¼–è¯‘...
+if not exist "%YOSYSHQ_ROOT%\bin\iverilog.exe" (
+    echo [´íÎó] ÕÒ²»µ½ iverilog
+    echo Ô¤ÆÚÂ·¾¶: %YOSYSHQ_ROOT%\bin\iverilog.exe
+    echo.
+    pause
+    exit /b 1
+)
+
+echo [1/2] ±àÒë counter.v + counter_tb.v ...
 iverilog -g2012 -o sim counter.v counter_tb.v
 if errorlevel 1 goto :err
 
-echo [2/2] ä»¿çœŸ...
+echo.
+echo [2/2] ÔËĞĞ·ÂÕæ ...
 vvp sim
 if errorlevel 1 goto :err
 
 echo.
-echo [OK] æ³¢å½¢ï¼šcounter_tb.vcd
-echo      ç”¨ VS Code æ‰“å¼€è¿™ä¸ªæ–‡ä»¶å³å¯çœ‹æ³¢å½¢ï¼ˆVaporView æ‰©å±•ï¼‰
-goto :eof
+echo [Íê³É] ²¨ĞÎÎÄ¼şÒÑÉú³É: counter_tb.vcd
+echo        ÔÚ VS Code Àïµã¿ªËü¾ÍÄÜ¿´²¨ĞÎ
+echo.
+pause
+exit /b 0
 
 :err
 echo.
-echo [FAIL] ä¸Šä¸€æ­¥å‡ºé”™
+echo [Ê§°Ü] ÉÏÒ»²½±¨´íÁË£¬¿´ÉÏÃæ¼¸ĞĞµÄ´íÎóĞÅÏ¢
+echo.
+pause
 exit /b 1

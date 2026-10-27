@@ -1,6 +1,8 @@
 @echo off
-REM wave.bat â€”â€” ä¸€é”®æ‰“å¼€ ModelSim æ³¢å½¢çª—å£ï¼ˆä¿¡å·å·²è‡ªåŠ¨åŠ å¥½ï¼‰
+chcp 936 >nul
+REM ±¸ÓÃ·½°¸£ºÓÃ ModelSim ´ò¿ª²¨ÐÎ´°¿Ú£¨ÐÅºÅÒÑ×Ô¶¯¼ÓºÃ£©
 setlocal
-set PATH=D:\altera\13.1\modelsim_ase\win32aloem;%PATH%
+set "PATH=D:\altera\13.1\modelsim_ase\win32aloem;%PATH%"
 cd /d "%~dp0"
 vsim -do wave.do counter_tb
+pause

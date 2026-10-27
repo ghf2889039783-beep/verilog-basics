@@ -13,21 +13,29 @@
 
 ```
 counter/
+├── 打开工程.bat      双击 = 用 VS Code 打开本目录
+├── run_oss.bat       双击 = 编译 + 仿真（iverilog，主力）
+├── 看波形.bat        双击 = 编译 + 仿真 + 弹 GTKWave
+├── run.bat           备用 = ModelSim-Altera Starter
+├── wave.bat          备用 = ModelSim 波形窗口
 ├── counter.v         RTL
 ├── counter_tb.v      自检 TB（PASS/FAIL 由 $display 判定，不靠肉眼）
 ├── Makefile          WSL 里 make run / make wave / make clean
-├── run.bat           Windows 侧用 ModelSim-Altera Starter 跑
-└── counter_tb.vcd    仿真波形（gtkwave 打开）
+└── counter_tb.vcd    仿真波形（VS Code 里点开，或 GTKWave）
 ```
 
 ## 怎么跑
 
-**Windows（当前机器，ModelSim 10.1d）**
+**Windows（当前机器，主力方式）**
 
-```powershell
-cd E:\work\verilog\counter
-.\run.bat
+双击 `run_oss.bat`，或命令行：
+
+```bat
+cd /d E:\work\verilog\counter
+run_oss.bat
 ```
+
+期望输出结尾：`RESULT: ALL PASS  (6/6)`
 
 **WSL / Ubuntu（iverilog + gtkwave）**
 
@@ -35,6 +43,22 @@ cd E:\work\verilog\counter
 make run     # 编译 + 仿真，直接打印 PASS/FAIL
 make wave    # 顺便打开波形
 ```
+
+## 怎么看波形
+
+1. 先跑一次 `run_oss.bat` 生成 `counter_tb.vcd`
+2. VS Code 里点开 `counter_tb.vcd` → VaporView 扩展渲染成波形
+3. 或双击 `看波形.bat` → 直接弹 GTKWave
+
+看波形顺序：先找时钟（周期应为 10ns）→ 再看复位（`rst_n` 拉低时 `cnt` 应立刻归零）→ 最后看 `en` 与 `cnt` 的加一关系。
+
+## ⚠️ 改 .bat 的注意事项
+
+本目录的 `.bat` 全部是 **GBK 编码 + CRLF 换行**。原因是中文 Windows 的 cmd 按 GBK 解码，
+若存成 UTF-8，中文注释会变乱码并把 `setlocal` / `goto` 一起吞掉，脚本一条命令都执行不了。
+
+在 VS Code 里改 `.bat` 后，必须确认右下角编码显示 `GBK`（不是 `UTF-8`）再保存。
+若不小心存成 UTF-8 出现乱码，用 Git 还原：`git checkout -- run_oss.bat`。
 
 ## TB 的 6 个 check point
 
